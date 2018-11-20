@@ -1,0 +1,61 @@
+Engine: wallDetection
+InputVariable: SensorFrente
+  enabled: true
+  range: 0.000 0.500
+  term: Perto Trapezoid 0.000 0.000 0.050 0.080
+  term: Medio Trapezoid 0.050 0.080 0.190 0.200
+  term: LongeOuNaoDetectado Trapezoid 0.190 0.201 0.500 0.500
+InputVariable: SensorEsq
+  enabled: true
+  range: 0.000 0.500
+  term: Perto Trapezoid 0.000 0.000 0.050 0.080
+  term: Medio Trapezoid 0.050 0.080 0.190 0.200
+  term: LongeOuNaoDetectado Trapezoid 0.190 0.201 0.500 0.500
+InputVariable: SensorDir
+  enabled: true
+  range: 0.000 0.500
+  term: Perto Trapezoid 0.000 0.000 0.050 0.080
+  term: Medio Trapezoid 0.050 0.080 0.190 0.200
+  term: LongeOuNaoDetectado Trapezoid 0.190 0.201 0.500 0.500
+OutputVariable: MotorEsq
+  enabled: true
+  range: -10.000 10.000
+  accumulation: AlgebraicSum
+  defuzzifier: Centroid 200
+  default: 0.000
+  lock-valid: false
+  lock-range: true
+  term: ReversoRapido Trapezoid -10.000 -10.000 -6.000 -4.000
+  term: ReversoLento Trapezoid -6.000 -4.000 0.000 0.000
+  term: Lento Trapezoid 0.000 0.000 4.000 6.000
+  term: Rapido Trapezoid 4.000 6.000 10.000 10.000
+OutputVariable: MotorDir
+  enabled: true
+  range: -10.000 10.000
+  accumulation: AlgebraicSum
+  defuzzifier: Centroid 200
+  default: 0.000
+  lock-valid: false
+  lock-range: true
+  term: ReversoRapido Trapezoid -10.000 -10.000 -6.000 -4.000
+  term: ReversoLento Trapezoid -6.000 -4.000 0.000 0.000
+  term: Lento Trapezoid 0.000 0.000 4.000 6.000
+  term: Rapido Trapezoid 4.000 6.000 10.000 10.000
+RuleBlock: 
+  enabled: true
+  conjunction: Minimum
+  disjunction: Maximum
+  activation: Minimum
+  rule: if SensorFrente is LongeOuNaoDetectado and SensorEsq is LongeOuNaoDetectado and SensorDir is LongeOuNaoDetectado then MotorDir is Rapido and MotorEsq is Rapido
+  rule: if (SensorFrente is Perto or SensorFrente is Medio) and (SensorEsq is Perto or SensorEsq is Medio) and (SensorDir is Perto or SensorDir is Medio) then MotorEsq is ReversoRapido and MotorDir is Rapido
+  rule: if (SensorFrente is Perto or SensorFrente is Medio) and SensorEsq is Perto and SensorDir is LongeOuNaoDetectado then MotorEsq is Rapido and MotorDir is ReversoRapido
+  rule: if (SensorFrente is Perto or SensorFrente is Medio) and SensorEsq is Medio and SensorDir is LongeOuNaoDetectado then MotorEsq is ReversoLento and MotorDir is ReversoRapido
+  rule: if (SensorFrente is Perto or SensorFrente is Medio) and SensorEsq is LongeOuNaoDetectado and SensorDir is Perto then MotorEsq is ReversoRapido and MotorDir is Rapido
+  rule: if (SensorFrente is Perto or SensorFrente is Medio) and SensorEsq is LongeOuNaoDetectado and SensorDir is Medio then MotorEsq is ReversoRapido and MotorDir is ReversoLento
+  rule: if SensorFrente is Perto and SensorEsq is LongeOuNaoDetectado and SensorDir is LongeOuNaoDetectado then MotorEsq is ReversoRapido and MotorDir is Rapido
+  rule: if SensorFrente is Medio and SensorEsq is LongeOuNaoDetectado and SensorDir is LongeOuNaoDetectado then MotorEsq is ReversoRapido and MotorDir is ReversoLento
+  rule: if SensorFrente is LongeOuNaoDetectado and SensorDir is LongeOuNaoDetectado and (SensorEsq is Perto or SensorEsq is Medio) then MotorEsq is Rapido and MotorDir is Lento
+  rule: if SensorFrente is LongeOuNaoDetectado and SensorEsq is LongeOuNaoDetectado and (SensorDir is Perto or SensorDir is Medio) then MotorEsq is Lento and MotorDir is Rapido
+  rule: if SensorFrente is LongeOuNaoDetectado and ((SensorEsq is Perto and SensorDir is Perto) or (SensorEsq is Medio and SensorDir is Medio)) then MotorEsq is Rapido and MotorDir is Rapido
+  rule: if SensorFrente is LongeOuNaoDetectado and SensorEsq is Perto and SensorDir is Medio then MotorEsq is Rapido and MotorDir is Lento
+  rule: if SensorFrente is LongeOuNaoDetectado and SensorEsq is Medio and SensorDir is Perto then MotorEsq is Lento and MotorDir is Rapido
